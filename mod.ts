@@ -11,7 +11,7 @@ import {
   useStatusBar,
 } from "./deps/scrapbox.ts";
 import { getSelection } from "./selection.ts";
-import { defaultHook } from "./hook.ts";
+import { defaultHook, Updater } from "./hook.ts";
 import type { NewPageHook, NewPageHookResult, OpenMode } from "./hook.ts";
 declare const scrapbox: Scrapbox;
 export type {
@@ -20,6 +20,7 @@ export type {
   NewPageHookResult,
   OpenMode,
   Page,
+  Updater,
 } from "./hook.ts";
 
 export interface NewPageInit {
@@ -83,10 +84,12 @@ export const newPage = async (init?: NewPageInit): Promise<void> => {
     let counter = 0;
     await Promise.all(result.pages.map(
       async (page) => {
-        await patch(page.project, page.title, (lines) => [
-          ...lines.map((line) => line.text),
-          ...page.lines,
-        ], { socket });
+        const updater: Updater = Array.isArray(page.lines)
+          ? (
+            lines,
+          ) => [...lines.map((line) => line.text), ...(page.lines as string[])]
+          : page.lines;
+        await patch(page.project, page.title, updater, { socket });
 
         render(
           { type: "spinner" },
