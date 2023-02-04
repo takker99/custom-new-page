@@ -47,6 +47,7 @@ export interface NewPageHookOptions {
 export interface NewPageHookResult {
   /** 元のページに残すテキスト */
   text: string;
+
   /** 切り出すページ */
   pages: Page[];
 }

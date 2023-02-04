@@ -39,7 +39,7 @@ export interface NewPageInit {
    */
   hooks?: NewPageHook[];
 }
-export const newPage = async (init?: NewPageInit) => {
+export const newPage = async (init?: NewPageInit): Promise<void> => {
   // 設定とか
   const {
     project = scrapbox.Project.name,
