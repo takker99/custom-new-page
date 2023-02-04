@@ -105,6 +105,7 @@ export const newPage = async (init?: NewPageInit) => {
 
     // 書き込みに成功したらもとのテキストを消す
     const text = result.text;
+    if (selectedText === text) return;
     await patch(scrapbox.Project.name, scrapbox.Page.title, (lines) => {
       const lines_ = lines.map((line) => line.text);
       return [
