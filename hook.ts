@@ -64,6 +64,12 @@ export interface NewPageHookOptions {
 }
 
 export interface NewPageHookResult {
+  /** hook's name
+   *
+   * must be unique
+   */
+  name: string;
+
   /** 元のページに残すテキスト */
   text: string;
 
@@ -95,6 +101,7 @@ export const defaultHook: NewPageHook = (
   ];
 
   return {
+    name: "default-hook",
     text: `[${newTitle}]`,
     pages: [{ project: projectTo, title: newTitle, lines: newLines, mode }],
   };
