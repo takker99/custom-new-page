@@ -35,16 +35,24 @@ export interface Page {
   mode: OpenMode;
 }
 
-/** 切り出し時の書式設定を行う関数
- *
- * @param text 切り出す文字列
- * @param options `newPage()`で渡されたhooks以外の情報
- * @return 新規作成するページ情報とかを返す。もし条件に一致しないなどで切り出さない場合は`undefined`を返す
- */
-export type NewPageHook = (
-  text: string,
-  options: NewPageHookOptions,
-) => Promise<NewPageHookResult | undefined> | NewPageHookResult | undefined;
+export interface NewPageHook {
+  /** hook's name
+   *
+   * must be unique
+   */
+  hookName: string;
+
+  /** 切り出し時の書式設定を行う関数
+   *
+   * @param text 切り出す文字列
+   * @param options `newPage()`で渡されたhooks以外の情報
+   * @return 新規作成するページ情報とかを返す。もし条件に一致しないなどで切り出さない場合は`undefined`を返す
+   */
+  (
+    text: string,
+    options: NewPageHookOptions,
+  ): Promise<NewPageHookResult> | NewPageHookResult | undefined;
+}
 
 export interface NewPageHookOptions {
   /** 切り出し元ページのtitle */
@@ -64,12 +72,6 @@ export interface NewPageHookOptions {
 }
 
 export interface NewPageHookResult {
-  /** hook's name
-   *
-   * must be unique
-   */
-  name: string;
-
   /** 元のページに残すテキスト */
   text: string;
 
@@ -101,8 +103,9 @@ export const defaultHook: NewPageHook = (
   ];
 
   return {
-    name: "default-hook",
     text: `[${newTitle}]`,
     pages: [{ project: projectTo, title: newTitle, lines: newLines, mode }],
   };
 };
+
+defaultHook.hookName = "default-hook";
