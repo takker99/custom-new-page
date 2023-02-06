@@ -71,39 +71,51 @@ export const newPage = async (init?: NewPageInit): Promise<void> => {
     throw Error("どの関数でも切り出しできなかった");
   }
 
+  // 切り出す文章も元のページを書き換えることもなければなにもしない
+  if (result.pages.length === 0 && result.text === selectedText) return;
+
   // 個別のpageに切り出す
   let socket: Socket | undefined;
   const { render, dispose } = useStatusBar();
   try {
-    const length = result.pages.length;
+    if (result.pages.length > 0) {
+      const length = result.pages.length;
+      render(
+        { type: "spinner" },
+        { type: "text", text: `Create new ${length} pages...` },
+      );
+      socket = await makeSocket();
+      let counter = 0;
+      await Promise.all(result.pages.map(
+        async (page) => {
+          const updater: Updater = Array.isArray(page.lines)
+            ? (
+              lines,
+            ) => [
+              ...lines.map((line) => line.text),
+              ...(page.lines as string[]),
+            ]
+            : page.lines;
+          await patch(page.project, page.title, updater, { socket });
+
+          render(
+            { type: "spinner" },
+            {
+              type: "text",
+              text: `Create ${length - (++counter)} pages...`,
+            },
+          );
+        },
+      ));
+    }
     render(
       { type: "spinner" },
-      { type: "text", text: `Create new ${length} pages...` },
-    );
-    socket = await makeSocket();
-    let counter = 0;
-    await Promise.all(result.pages.map(
-      async (page) => {
-        const updater: Updater = Array.isArray(page.lines)
-          ? (
-            lines,
-          ) => [...lines.map((line) => line.text), ...(page.lines as string[])]
-          : page.lines;
-        await patch(page.project, page.title, updater, { socket });
-
-        render(
-          { type: "spinner" },
-          {
-            type: "text",
-            text: `Create ${length - (++counter)} pages...`,
-          },
-        );
+      {
+        type: "text",
+        text: `${
+          result.pages.length > 0 ? "Created. " : ""
+        }Removing cut text...`,
       },
-    ));
-
-    render(
-      { type: "spinner" },
-      { type: "text", text: "Created. Removing cut text..." },
     );
 
     // 書き込みに成功したらもとのテキストを消す
