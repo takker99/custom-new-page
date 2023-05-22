@@ -8,6 +8,7 @@ import {
   Scrapbox,
   sleep,
   Socket,
+  takeInternalLines,
   useStatusBar,
 } from "./deps/scrapbox.ts";
 import { getSelection } from "./selection.ts";
@@ -71,7 +72,7 @@ export const makeNewPage = (
         title: scrapbox.Page.title,
         projectFrom: scrapbox.Project.name,
         projectTo: project,
-        lines: scrapbox.Page.lines.slice(start.line, end.line + 1),
+        lines: takeInternalLines().slice(start.line, end.line + 1),
         mode,
       });
       if (result) return [hook.hookName, result] as const;
