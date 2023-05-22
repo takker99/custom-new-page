@@ -1,5 +1,5 @@
 // ported from https://scrapbox.io/takker/custom-new-page-3
-import type { Line, patch } from "./deps/scrapbox.ts";
+import type { BaseLine, patch } from "./deps/scrapbox.ts";
 import { getIndentCount } from "./deps/scrapbox.ts";
 
 export type Updater = Parameters<typeof patch>[2];
@@ -65,7 +65,7 @@ export interface NewPageHookOptions {
   projectTo: string;
 
   /** 切り出し範囲を含む行 */
-  lines: Line[];
+  lines: BaseLine[];
 
   /** 切り出したページを開く方法 */
   mode: OpenMode;
