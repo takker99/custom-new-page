@@ -1,6 +1,5 @@
 // ported from https://scrapbox.io/takker/custom-new-page-3
-import type { BaseLine, patch } from "./deps/scrapbox.ts";
-import { getIndentCount } from "./deps/scrapbox.ts";
+import { type BaseLine, getIndentCount, type patch } from "./deps/scrapbox.ts";
 
 export type Updater = Parameters<typeof patch>[2];
 

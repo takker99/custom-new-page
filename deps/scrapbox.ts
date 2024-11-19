@@ -1,24 +1,16 @@
-export type {
-  BaseLine,
-  Scrapbox,
-} from "https://raw.githubusercontent.com/scrapbox-jp/types/0.4.2/userscript.ts";
+export type { BaseLine, Scrapbox } from "jsr:@cosense/types@0.10/userscript";
 export {
   caret,
+  type CaretInfo,
+  connect,
   disconnect,
-  encodeTitleURI,
   getIndentLineCount,
   getText,
-  makeSocket,
   openInTheSameTab,
   patch,
+  type ScrapboxSocket,
   takeInternalLines,
   useStatusBar,
-} from "https://raw.githubusercontent.com/takker99/scrapbox-userscript-std/0.23.1/mod.ts";
-export type {
-  CaretInfo,
-  Socket,
-} from "https://raw.githubusercontent.com/takker99/scrapbox-userscript-std/0.23.1/mod.ts";
-export * from "https://raw.githubusercontent.com/takker99/scrapbox-userscript-std/0.23.1/sleep.ts";
-export {
-  getIndentCount,
-} from "https://raw.githubusercontent.com/takker99/scrapbox-userscript-std/0.23.1/text.ts";
+} from "jsr:@cosense/std@0.29/browser";
+export { getIndentCount } from "jsr:@cosense/std@0.29/text";
+export { encodeTitleURI } from "jsr:@cosense/std@0.29/title";

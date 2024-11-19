@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "fix": "deno fmt && deno lint --fix && deno test --allow-read --doc --parallel --shuffle",
+    "check": "deno fmt --check && deno lint && deno test --allow-read --doc --parallel --shuffle",
+    "coverage": "deno test --allow-read=./ --parallel --shuffle --coverage && deno coverage --html"
+  },
+  "compilerOptions": {
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ]
+  },
+  "exclude": [
+    "docs/",
+    "coverage/"
+  ]
+}
