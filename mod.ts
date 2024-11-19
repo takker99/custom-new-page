@@ -1,19 +1,19 @@
 // ported from https://scrapbox.io/takker/custom-new-page-3
 import {
+  connect,
   disconnect,
   encodeTitleURI,
-  makeSocket,
   openInTheSameTab,
   patch,
-  Scrapbox,
-  sleep,
-  Socket,
+  type Scrapbox,
+  type ScrapboxSocket,
   takeInternalLines,
   useStatusBar,
 } from "./deps/scrapbox.ts";
 import { getSelection } from "./selection.ts";
-import { defaultHook, Updater } from "./hook.ts";
-import type { NewPageHook, OpenMode } from "./hook.ts";
+import { defaultHook, NewPageHook, OpenMode, Updater } from "./hook.ts";
+import { delay } from "jsr:@std/async@1/delay";
+import { isErr, unwrapErr, unwrapOk } from "npm:option-t@50/plain_result";
 declare const scrapbox: Scrapbox;
 export type {
   NewPageHook,
@@ -90,7 +90,7 @@ export const makeNewPage = (
     if (result.pages.length === 0 && result.text === selectedText) return;
 
     // 個別のpageに切り出す
-    let socket: Socket | undefined;
+    let socket: ScrapboxSocket | undefined;
     const { render, dispose } = useStatusBar();
     try {
       if (result.pages.length > 0) {
@@ -99,7 +99,9 @@ export const makeNewPage = (
           { type: "spinner" },
           { type: "text", text: `Create new ${length} pages...` },
         );
-        socket = await makeSocket();
+        const res = await connect();
+        if (isErr(res)) throw unwrapErr(res);
+        socket = unwrapOk(res);
         let counter = 0;
         await Promise.all(result.pages.map(
           async (page) => {
@@ -159,7 +161,7 @@ export const makeNewPage = (
               openInTheSameTab(page.project, page.title);
             } else {
               // UserScriptを再読込させる
-              window.open(
+              globalThis.open(
                 `https://scrapbox.io/${page.project}/${
                   encodeTitleURI(page.title)
                 }`,
@@ -168,7 +170,7 @@ export const makeNewPage = (
             }
             break;
           case "newtab":
-            window.open(
+            globalThis.open(
               `https://scrapbox.io/${page.project}/${
                 encodeTitleURI(page.title)
               }`,
@@ -183,7 +185,7 @@ export const makeNewPage = (
       );
       console.error(e);
     } finally {
-      const waiting = sleep(1000);
+      const waiting = delay(1000);
       if (socket) await disconnect(socket);
       await waiting;
       dispose();
