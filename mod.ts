@@ -40,6 +40,9 @@ export interface MakeNewPageInit {
    * 最初に`undefined`以外を返したhookだけを採用する
    */
   hooks?: NewPageHook[];
+
+  /** 通信に使うsocket */
+  socket?: ScrapboxSocket;
 }
 
 /** 切り出しを実行する関数 */
@@ -99,7 +102,7 @@ export const makeNewPage = (
           { type: "spinner" },
           { type: "text", text: `Create new ${length} pages...` },
         );
-        const res = await connect();
+        const res = await connect(init?.socket);
         if (isErr(res)) throw unwrapErr(res);
         socket = unwrapOk(res);
         let counter = 0;
